@@ -4,43 +4,7 @@
     } : function(obj) {
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj
     };
-    var templates = {};
-    window.initTemplates = function(selectors, add, parent) {
-        window.initTemplatesSurfix("", selectors, add, parent)
-    };
-    window.initTemplatesSurfix = function(surfix, selectors, add, parent) {
-        if (!add) add = "append";
-        var selectorAr = selectors.split(",");
-        var func = function func() {
-            for (var i = selectorAr.length - 1; i >= 0; i--) {
-                var selector = selectorAr[i].replace(/\s*((\s|\w)*)\s*/g, "$1");
-                var el = $(surfix + selector);
-                if (el.length > 0) {
-                    selectorAr.splice(i, 1);
-                    el.removeClass("template");
-                    templates[selector] = {
-                        parent: parent || el.parent(),
-                        data: el[0].outerHTML,
-                        add: add
-                    };
-                    el.remove()
-                }
-            }
-        };
-        $(func);
-        func()
-    };
-    window.loadTemplate = function(selector, parent, add) {
-        var template = templates[selector];
-        var element = $(template.data);
-        var add = add || template.add;
-        if (typeof add != "string") {
-            element.insertBefore(add)
-        } else {
-            (parent || template.parent)[add](element)
-        }
-        return element
-    };
+
     var orAlert = alert;
     var alertID = 0;
     var transitionDuration = 400;
@@ -148,11 +112,6 @@
         $(".dot#" + index).addClass("selected")
     }
     $(function() {
-        previewData = [{
-            name: "VizWick",
-            description: "VizWick is a web page that aims to visualize data in a simple way. This web page was created as a first year Computer Science project at Eindhoven's University of Technology (TU/e). VizWick uses its own framework, rather than making use of an existing one The framework was created with large data sets in mind. In order to handle these large data sets, it makes sure not to show all data at once. Instead it offers simple methods to allow visualizations to move through the data dynamically. The user can specify how many nodes they want to display at once, making sure that the user's computer keeps running smoothly. This approach works very well in general, but one detail was overlooked while making the framework. The number of child nodes might be higher than the maximum number of nodes that your computer can handle. In this case the last nodes will never be displayed, and thus the user won't be able to interact with them. The framework would require some major changes in order to solve this issue. VizWick is entirely open source however, so feel free to tackle this issue if you happen to be a programmer. The last major benefit that VizWick offers is that it is able to show its 3D visualizations in VR making use of WebVR. VR is a very interesting and intuitive platform to display data, and visualizations in VR are becoming increasingly popular, so we are very proud of supporting this feature in VizWick.",
-            image: "Resources/Images/Visualization page.png"
-        }];
         var visualisations = VisualisationHandler.getVisualisationTypes();
         for (var i = 0; i < visualisations.length; i++) {
             var visName = visualisations[i];
@@ -304,11 +263,6 @@
                 var quadrant = $("." + areaName);
                 catchEvents(quadrant.find(".option-pane"));
                 attachOptions(options, quadrant);
-                if (visualisation instanceof VIZ3D.Visualisation) {
-                    quadrant.find(".VR-button").show()
-                } else {
-                    quadrant.find(".VR-button").hide()
-                }
             })
         };
         for (var i = 0; i < areaNames.length; i++) {
@@ -321,23 +275,6 @@
             });
             $(".visualizations-inner").append("<div class='visualization-button noselect' vizID='" + type + "'>" + "<div class='center'>" + type + "</div>" + "</div>")
         }
-        $(".VR-button").click(function() {
-            if (VRCamera.hasVRSupport()) {
-                var quadrant = $(this).closest(".quadrant").attr("class").split(" ")[0];
-                var viz = VisualisationHandler.getVisArea(quadrant).getVisualisation();
-                if (viz == VRCamera.getVisualisation() && VRCamera.isInVR()) {
-                    VRCamera.leaveVR()
-                } else {
-                    VRCamera.setVisualisation(viz);
-                    VRCamera.enterVR();
-                    if (!VRCamera.hmd) {
-                        alert("No VR headset is connected yet, please connect one in order to use VR.")
-                    }
-                }
-            } else {
-                alert("This browser doesn't have WebVR support yet, please try using Firefox instead.")
-            }
-        });
         {
             var dragging = null;
             $(".visualizations-inner").children().each(function() {
@@ -582,22 +519,6 @@
         })
     }
 
-    function copyToClipBoard(text) {
-        var inp = document.createElement("textarea");
-        document.body.appendChild(inp);
-        inp.value = text;
-        inp.select();
-        document.execCommand("copy", false);
-        inp.remove()
-    }
-    var optionTemplates = {
-        boolean: "<div class=\"option-outer\">" + "<div class=\"option toggle-type\">" + "<div class=\"option-name\">" + "test" + "</div>" + "<div class=\"option-value\">" + "<div class=\"toggle\" id=\"off\">" + "<div class=\"center\">" + "<div class=\"circle\">" + "</div>" + "</div>" + "</div>" + "</div>" + "</div>" + "</div>",
-        button: "<div class=\"option-outer noselect\">" + "<div class=\"option button-type\">" + "<div class=\"option-name\">" + "test" + "</div>" + "</div>" + "</div>",
-        buttonIcon: "<div class=option-button-icon-type>" + "<div class=center>" + "<div class=fa></div>" + "</div>" + "</div>",
-        number: "<div class=\"option-outer noselect\">" + "<div class=\"option number-type\">" + "<div class=\"option-name\">" + "Branch length" + "</div>" + "<div class=\"option-value\">" + "<input type=number>" + "</div>" + "</div>" + "</div>",
-        text: "<div class=\"option-outer noselect\">" + "<div class=\"option text-type\">" + "<div class=\"option-name\">" + "Branch length" + "</div>" + "<div class=\"option-value\">" + "<input type=text>" + "</div>" + "</div>" + "</div>"
-    };
-
     function attachOptions(options, container) {
         options.onOptionsChange(function(type, option) {
             var name = option.getName();
@@ -666,103 +587,4 @@
         })
     }
 
-    function share(callback) {
-        var data = VisualisationHandler.treeSourceText;
-        if (data) {
-            var getVisName = function getVisName(area) {
-                var viz = VisualisationHandler.getVisArea(area).getVisualisation();
-                if (viz) return viz.__proto__.constructor.description.name;
-                return ""
-            };
-            var getPath = function getPath(node, path) {
-                if (!path) path = [];
-                var parent = node.getParent();
-                if (parent) {
-                    var children = parent.getChildren();
-                    var index = children.indexOf(node);
-                    getPath(parent, path);
-                    path.push(index)
-                }
-                return path
-            };
-            var text = "layout:" + ($("body").is("#two") ? "two" : "four") + "," + "top-left:" + getVisName("top-left") + "," + "top-right:" + getVisName("top-right") + "," + "bottom-left:" + getVisName("bottom-left") + "," + "bottom-right:" + getVisName("bottom-right") + "," + "focused-node:" + getPath(VisualisationHandler.getSynchronisationData().focused).join(";") + "," + "data-set:" + data;
-            $.ajax({
-                type: "post",
-                url: "https://cors-anywhere.herokuapp.com/https://pastebin.com/api/api_post.php",
-                data: {
-                    api_dev_key: "8799c6fed6dd4dcc68499a11e9659398",
-                    api_option: "paste",
-                    api_paste_code: text
-                },
-                success: function success(text) {
-                    console.log(text);
-                    var url = text;
-                    var regex = /(\.com\/)(.*)/;
-                    var match = text.match(regex);
-                    if (match && match[2]) {
-                        console.log(match[2]);
-                        window.location.hash = match[2];
-                        alert({
-                            type: "verify",
-                            message: "Your link has been generated: " + window.location.href,
-                            okButtonText: "Copy url",
-                            cancelButtonText: "Ok",
-                            callback: function callback() {
-                                copyToClipBoard(window.location.href)
-                            }
-                        })
-                    } else {
-                        alert({
-                            message: "Something unfortunately went wrong while uploading your data: " + text,
-                            duration: 10e3
-                        })
-                    }
-                    if (callback) callback(match && !!match[1])
-                }
-            })
-        } else {
-            alert("Please load a data set before trying to share your data.");
-            if (callback) callback(false)
-        }
-    }
-    $(function() {
-        if (window.location.hash) {
-            var loadingID = alert("Linked data has been detected, please hold on while attempting to load this data.");
-            $.ajax({
-                type: "get",
-                url: "https://cors-anywhere.herokuapp.com/https://pastebin.com/raw/" + window.location.hash.substring(1),
-                success: function success(text) {
-                    var start = "layout";
-                    if (text.substring(0, start.length) == start) {
-                        var parts = text.split(",");
-                        var twoLayout = parts.shift().split(":")[1] == "two";
-                        var topLeft = parts.shift().split(":")[1];
-                        var topRight = parts.shift().split(":")[1];
-                        var bottomLeft = parts.shift().split(":")[1];
-                        var bottomRight = parts.shift().split(":")[1];
-                        var focusedPath = parts.shift().split(":")[1].split(";");
-                        var dataSet = parts.join(",");
-                        $("[gotoPage=visualization-page]").first().click();
-                        if (twoLayout) $(".two-button").click();
-                        else $(".four-button").click();
-                        VisualisationHandler.setTree(null);
-                        if (topLeft) VisualisationHandler.setVisualisationForArea("top-left", topLeft);
-                        if (topRight) VisualisationHandler.setVisualisationForArea("top-right", topRight);
-                        if (bottomLeft) VisualisationHandler.setVisualisationForArea("bottom-left", bottomLeft);
-                        if (bottomRight) VisualisationHandler.setVisualisationForArea("bottom-right", bottomRight);
-                        VisualisationHandler.readText(dataSet);
-                        var node = VisualisationHandler.getTree().getRoot();
-                        if (focusedPath[0].length > 0)
-                            for (var i = 0; i < focusedPath.length; i++) {
-                                node = node.getChildren()[focusedPath[i]]
-                            }
-                        VisualisationHandler.synchronizeNode("focused", node);
-                        alert("The data has been loaded successfully.")
-                    } else {
-                        alert("The data set passed through the URL is invalid or no longer exists.")
-                    }
-                }
-            })
-        }
-    });;
 })();

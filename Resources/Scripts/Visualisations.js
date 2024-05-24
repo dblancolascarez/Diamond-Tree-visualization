@@ -324,10 +324,6 @@
                     return function(){
                         s=Math.sin(s)*10000;
                         return s-Math.floor(s)}};
-                        Tree.description={
-                            name:"Acacia Tree",
-                            description:""
-                        };
                     })(); (function(){
                         var defaultRadius=100;
                         var gap=100;

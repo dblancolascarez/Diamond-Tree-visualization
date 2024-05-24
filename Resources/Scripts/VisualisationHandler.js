@@ -97,47 +97,6 @@
                                 this.options=new Options;
                                 this.visualisation=new visualisationClass(this.areaElement,tree,this.options);
                                 this.optionsCreationListener&&this.optionsCreationListener(this.options,this.visualisation);
-                                if(this.wasInVR){
-                                    this.wasInVR=false;
-                                    if(this.visualisation instanceof VIZ3D.Visualisation){
-                                        VRCamera.setVisualisation(this.visualisation);
-                                    }
-                                    else{
-                                        var _iteratorNormalCompletion=true;
-                                        var _didIteratorError=false;
-                                        var _iteratorError=undefined;
-                                        try{
-                                            for(
-                                                var _iterator=VisualisationHandler.getExistingVisualisations()[Symbol.iterator
-                                                    ](),
-                                                    _step;
-                                                !(_iteratorNormalCompletion=(_step=_iterator.next()).done);
-                                                _iteratorNormalCompletion=true
-                                                ){
-                                                    var vis=_step.value;
-                                                    if(vis instanceof VIZ3D.Visualisation){
-                                                        VRCamera.setVisualisation(vis);
-                                                        break;
-                                                    }
-                                                }
-                                            }
-                                            catch(err){
-                                                _didIteratorError=true;
-                                                _iteratorError=err;
-                                            }
-                                            finally{
-                                                try{
-                                                    if(!_iteratorNormalCompletion&&_iterator.return){
-                                                        _iterator.return();
-                                                    }
-                                                } finally{
-                                                    if(_didIteratorError){
-                                                        throw _iteratorError;
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
                                     console.info('Visualisation \''+visualisationClass.description.name+'\' created');
                                 }
                                 return this;
@@ -146,7 +105,6 @@
                             key:'deleteVisualisation',
                             value:function deleteVisualisation(){
                                 if(this.visualisation){
-                                    this.wasInVR=this.visualisation.isInVR&&this.visualisation.isInVR();
                                     this.visualisation.destroy();
                                     this.visualisation=null;
                                 }
@@ -162,12 +120,6 @@
                             key:'getVisualisation',
                             value:function getVisualisation(){
                                 return this.visualisation;
-                            }
-                        },{
-                            key:'isInVR',
-                            value:function isInVR(){
-                                if(this.visualisation)return this.visualisation.isInVR();
-                                return false;
                             }
                         },{
                             key:'syncSelectedNodes'
