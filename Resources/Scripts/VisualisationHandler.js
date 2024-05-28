@@ -21,63 +21,71 @@
             throw new TypeError('Cannot call a class as a function');
         }
     }
-    function makeTreeObj(input){
-        var semicolonCounter=0;
-        var scanner=true;
-        var stack=[];
-        var rootOfRoot={
-            name:null,
-            parent:null,
-            children:[]};
-            var regex=',(); ';
-            rootOfRoot.name='rootOfRoot';
-            var node=rootOfRoot;
-            var subNode;for(var i=input.length-1;i>=0;i--){
-                if(scanner==true){
-                    var n=input.charAt(i);
-                    switch(n){
-                        case')':
-                            stack.push(node);
-                            node=subNode;
-                            break;
-                        case'(':
-                            node=stack.pop();
-                            break;
-                        case',':
-                            break;
-                        case';':
-                            if(++semicolonCounter>1)scanner=false;
-                            break;
-                        case' ':
-                            break;
-                        case'\n':
-                            break;
-                        case'\t':
-                            break;
-                        default:
-                            subNode={
-                                name:null,
-                                parent:null,
-                                children:[]};
-                                subNode.name=n;
-                                var j=i-1;
-                                while(regex.indexOf(input[j])==-1&&j>=0){
-                                    subNode.name=input[j]+subNode.name;
-                                    j--;
-                                }
-                                i=j+1;
-                                subNode.parent=node;
-                                node.children.push(subNode);
-                                break;
-                            }
+    function makeTreeObj(input) {
+        var semicolonCounter = 0;
+        var scanner = true;
+        var stack = [];
+        var rootOfRoot = {
+            name: null,
+            parent: null,
+            children: []
+        };
+        var regex = ',(); ';
+        rootOfRoot.name = 'rootOfRoot';
+        var node = rootOfRoot;
+        var subNode;
+    
+        for (var i = input.length - 1; i >= 0; i--) {
+            if (scanner == true) {
+                var n = input.charAt(i);
+                switch (n) {
+                    case ')':
+                        stack.push(node);
+                        node = subNode;
+                        break;
+                    case '(':
+                        node = stack.pop();
+                        break;
+                    case ',':
+                        break;
+                    case ';':
+                        if (++semicolonCounter > 1) scanner = false;
+                        break;
+                    case ' ':
+                        break;
+                    case '\n':
+                        break;
+                    case '\t':
+                        break;
+                    default:
+                        subNode = {
+                            name: '',
+                            parent: null,
+                            children: []
+                        };
+                        subNode.name = n;
+                        var j = i - 1;
+                        while (regex.indexOf(input[j]) == -1 && j >= 0) {
+                            subNode.name = input[j] + subNode.name;
+                            j--;
                         }
-                        else{
-                            
+                        i = j + 1;
+                        subNode.parent = node;
+                        if (!node.children) {
+                            node.children = [];
                         }
-                    }
-                    return rootOfRoot.children[0]||{name:'missing data',children:[]};
-                
-                };
+                        node.children.push(subNode);
+                        break;
+                }
+            } else {
+                // Unhandled characters or invalid input, possibly logging or throwing an error.
+            }
+        }
+    
+        return rootOfRoot.children[0] || { name: 'missing data', children: [] };
+    };
+
+    
                 
                 var VisualisationArea=function(){
                     function VisualisationArea(areaName,areaElement,optionsCreationListener){

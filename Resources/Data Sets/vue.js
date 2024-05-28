@@ -1,0 +1,28 @@
+dataSets.push({
+    name: "VUE",
+    image: "Resources/Images/Data Sets/Vue.png",
+    data: `id, value;
+    (VUE,43042112,
+    (VUE.@babel,1888798,
+    (VUE.@babel.parser,1888696,
+    (VUE.@babel.parser.CHANGELOG.md,38238),
+    (VUE.@babel.parser.LICENSE,1086),
+    (VUE.@babel.parser.README.md,427),
+    (VUE.@babel.parser.bin,430,
+    (VUE.@babel.parser.bin.babel-parser.js,328)),
+    (VUE.@babel.parser.lib,1840911,
+    (VUE.@babel.parser.lib.index.js,469611,
+    (VUE.@babel.parser.lib.index.js.map,1371164))),
+    (VUE.@babel.parser.package.json,1096),
+    (VUE.@babel.parser.typings,6202,
+    (VUE.@babel.parser.typings.babel-parser.d.ts,6100)))),
+    (VUE.@vitejs,178821,
+    (VUE.@vitejs.plugin-vue,178719,
+    (VUE.@vitejs.plugin-vue.LICENSE,1098),
+    (VUE.@vitejs.plugin-vue.README.md,3916),
+    (VUE.@vitejs.plugin-vue.dist,171811,
+    ((VUE.@vitejs.plugin-vue.dist.index.d.ts,2359),
+    (VUE.@vitejs.plugin-vue.dist.index.js,169316))),
+    (VUE.@vitejs.plugin-vue.package.json,1690))),
+    )root;`
+});
